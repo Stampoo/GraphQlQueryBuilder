@@ -7,6 +7,7 @@ import PackageDescription
 
 let package = Package(
     name: "GraphQlQueryBuilder",
+    platforms: [.iOS(.v13)],
     products: [
         .library(name: "GraphQlQueryBuilder", targets: ["GraphQlQueryBuilder"])
     ],
