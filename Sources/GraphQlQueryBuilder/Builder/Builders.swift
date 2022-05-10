@@ -9,9 +9,9 @@
 import Foundation
 
 @resultBuilder
-enum GrapqhQlQueryBuilder {
+public enum GrapqhQlQueryBuilder {
 
-    static func buildBlock(_ components: QueryElement...) -> [QueryElement] {
+    public static func buildBlock(_ components: QueryElement...) -> [QueryElement] {
         components
     }
 

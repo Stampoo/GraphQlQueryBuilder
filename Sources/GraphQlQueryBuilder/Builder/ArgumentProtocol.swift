@@ -21,4 +21,10 @@ public struct Arg: ArgumentProtocol {
     public let objectType: String
     public let object: [String: Any]
 
+    public init(key: String, objectType: String, object: [String: Any]) {
+        self.key = key
+        self.objectType = objectType
+        self.object = object
+    }
+
 }
