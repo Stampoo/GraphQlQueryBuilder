@@ -7,9 +7,9 @@
 
 import Foundation
 
-public protocol GraphQlQueryParserProcessorProtocol {
+public protocol GraphQlQueryParserProcessorProtocol: GraphQlKeyDuplicateTransformer {
 
-    init(buildedQuery: GraphQLQueryProtocol)
+    init(buildedQuery: GraphQLQueryProtocol, method: GraphQlMethod)
 
     func parse() -> String
     func getCollectedArguments() -> [ArgumentProtocol]
@@ -30,15 +30,19 @@ public final class GraphQlQueryParserProcessor: GraphQlQueryParserProcessorProto
     private let comma = ","
     private let whiteSpace = " "
     private let doubleWhiteSpace = "  "
-    private let queryPrefix = "query"
+    private var queryPrefix: String {
+        method.rawValue
+    }
 
     private let rawQueryBuilderResult: GraphQLQueryProtocol
+    private let method: GraphQlMethod
     private var arguments: [ArgumentProtocol] = []
 
     // MARK: - GraphQlQueryParserProcessorProtocol
 
-    required public init(buildedQuery: GraphQLQueryProtocol) {
+    required public init(buildedQuery: GraphQLQueryProtocol, method: GraphQlMethod) {
         self.rawQueryBuilderResult = buildedQuery
+        self.method = method
     }
 
     public func parse() -> String {
@@ -80,12 +84,13 @@ extension GraphQlQueryParserProcessor {
     }
 
     func parsedArgumentsForQueryHeader(_ arguments: [ArgumentProtocol]) -> String {
-        arguments.isEmpty ? "" : arguments.enumerated().reduce(bracketLeft) { partialResult, element in
+        var appendedArguments: [ArgumentProtocol] = []
+        return arguments.isEmpty ? "" : arguments.enumerated().reduce(bracketLeft) { partialResult, element in
             let argument = element.element
             let index = element.offset
             let parsedArgument = partialResult
                 + pointer
-                + argument.key
+                + transformDuplicateKey(argument.key, in: appendedArguments)
                 + doubleDot
                 + whiteSpace
                 + argument.objectType
@@ -94,6 +99,7 @@ extension GraphQlQueryParserProcessor {
             if arguments.endIndex - 1 == index {
                 return parsedArgument.dropLast(2) + bracketRight
             }
+            appendedArguments.append(argument)
             return parsedArgument
         }
     }
@@ -122,8 +128,9 @@ extension GraphQlQueryParserProcessor {
     }
 
     func parsedArgumentsForQueryElement(_ arguments: [ArgumentProtocol]) -> String {
-        self.arguments.append(contentsOf: arguments)
-        return arguments.isEmpty ? "" : arguments.enumerated().reduce(bracketLeft) { partialResult, element in
+        let parsedArguments = arguments.isEmpty
+            ? ""
+            : arguments.enumerated().reduce(bracketLeft) { partialResult, element in
             let argument = element.element
             let index = element.offset
             let parsedArgument = partialResult
@@ -131,7 +138,7 @@ extension GraphQlQueryParserProcessor {
                 + doubleDot
                 + whiteSpace
                 + pointer
-                + argument.key
+                + transformDuplicateKey(argument.key, in: self.arguments)
                 + comma
                 + whiteSpace
             if arguments.endIndex - 1 == index {
@@ -139,6 +146,8 @@ extension GraphQlQueryParserProcessor {
             }
             return parsedArgument
         }
+        self.arguments.append(contentsOf: arguments)
+        return parsedArguments
     }
 
 }

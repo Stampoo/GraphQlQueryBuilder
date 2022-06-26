@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol GraphQlArgumentParserProcessorProtocol {
+public protocol GraphQlArgumentParserProcessorProtocol: GraphQlKeyDuplicateTransformer {
 
     func parse(arguments: [ArgumentProtocol]) -> [String: Any]
 
@@ -25,10 +25,13 @@ public struct GraphQlArgumentParserProcessor: GraphQlArgumentParserProcessorProt
 
 private extension GraphQlArgumentParserProcessor {
 
-   func parseIntoDictionary(from arguments: [ArgumentProtocol]) -> [String: Any] {
-        arguments.reduce(into: [String: Any]()) { partialResult, argument in
-            partialResult[argument.key] = argument.object
+    func parseIntoDictionary(from arguments: [ArgumentProtocol]) -> [String: Any] {
+        var passedArguments: [ArgumentProtocol] = []
+        return arguments.reduce(into: [String: Any]()) { partialResult, argument in
+            partialResult[transformDuplicateKey(argument.key, in: passedArguments)] = argument.object
+            passedArguments.append(argument)
         }
     }
 
 }
+

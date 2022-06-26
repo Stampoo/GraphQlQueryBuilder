@@ -26,7 +26,7 @@ final class GraphQlArgumentParserProcessorTests: XCTestCase {
         }
         let argumentsShouldBe: [String: Any] = ["input2": firstObject]
 
-        let queryParser: GraphQlQueryParserProcessorProtocol = GraphQlQueryParserProcessor(buildedQuery: query)
+        let queryParser: GraphQlQueryParserProcessorProtocol = GraphQlQueryParserProcessor(buildedQuery: query, method: .query)
         _ = queryParser.parse()
         let argumentParser: GraphQlArgumentParserProcessorProtocol = GraphQlArgumentParserProcessor()
         let parsedArguments = argumentParser.parse(arguments: queryParser.getCollectedArguments())

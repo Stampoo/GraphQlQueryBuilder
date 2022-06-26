@@ -12,7 +12,7 @@ public protocol GraphQlParserProtocol {
     var queryParser: GraphQlQueryParserProcessorProtocol { get }
     var argumentParser: GraphQlArgumentParserProcessorProtocol { get }
 
-    init(query: GraphQLQueryProtocol)
+    init(query: GraphQLQueryProtocol, method: GraphQlMethod)
 
     func parseToDictionary(for method: GraphQlMethodProtocol) -> [String: Any]
 
@@ -31,8 +31,8 @@ public struct GraphQlParser: GraphQlParserProtocol {
 
     // MARK: - Initialization
 
-    public init(query: GraphQLQueryProtocol) {
-        self.queryParser = GraphQlQueryParserProcessor(buildedQuery: query)
+    public init(query: GraphQLQueryProtocol, method: GraphQlMethod) {
+        self.queryParser = GraphQlQueryParserProcessor(buildedQuery: query, method: method)
         self.argumentParser = GraphQlArgumentParserProcessor()
     }
 

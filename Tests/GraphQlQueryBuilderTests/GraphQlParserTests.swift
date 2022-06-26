@@ -25,7 +25,7 @@ final class GraphQlParserTests: XCTestCase {
                 Field("genre")
             }
         }
-        let parser = GraphQlParser(query: query)
+        let parser = GraphQlParser(query: query, method: .query)
         let parsedQuery = parser.parseToDictionary(for: GraphQlMethod.query)
         let expectation = expectation(description: "GraphQL request")
         let url = URL(string: "https://n7b67.sse.codesandbox.io/graphql")

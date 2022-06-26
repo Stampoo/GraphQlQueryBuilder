@@ -16,7 +16,7 @@ final class GraphQlQueryParserProcessorTests: XCTestCase {
         let thirdArg = Arg(key: "argThree", objectType: "", object: [:])
 
         let argumentWillShouldBe = "(argOne: $argOne, argTwo: $argTwo, argThree: $argThree)"
-        let parser = GraphQlQueryParserProcessor(buildedQuery: GraphQLQuery { })
+        let parser = GraphQlQueryParserProcessor(buildedQuery: GraphQLQuery { }, method: .query)
         let parsedArguments = parser.parsedArgumentsForQueryElement([firstArg, secondArg, thirdArg])
 
         XCTAssertEqual(argumentWillShouldBe, parsedArguments)
@@ -35,7 +35,7 @@ final class GraphQlQueryParserProcessorTests: XCTestCase {
           id
         }
         """
-        let parser = GraphQlQueryParserProcessor(buildedQuery: GraphQLQuery { })
+        let parser = GraphQlQueryParserProcessor(buildedQuery: GraphQLQuery { }, method: .query)
         let parsedQueryElement = parser.parsedQeryElement(queryElement, level: .zero)
         XCTAssertEqual(queryWillShouldBe, parsedQueryElement)
 
@@ -53,7 +53,8 @@ final class GraphQlQueryParserProcessorTests: XCTestCase {
           }
         }
         """
-        let parsedQueryWithSubQueryElement = parser.parsedQeryElement(queryWithSubQueryElement, level: .zero)
+        let secondParser = GraphQlQueryParserProcessor(buildedQuery: GraphQLQuery { }, method: .query)
+        let parsedQueryWithSubQueryElement = secondParser.parsedQeryElement(queryWithSubQueryElement, level: .zero)
         print(parsedQueryWithSubQueryElement)
         XCTAssertEqual(queryWithSubQueryWillShouldBe, parsedQueryWithSubQueryElement)
     }
@@ -86,7 +87,7 @@ final class GraphQlQueryParserProcessorTests: XCTestCase {
             }
         }
 
-        let parser = GraphQlQueryParserProcessor(buildedQuery: query)
+        let parser = GraphQlQueryParserProcessor(buildedQuery: query, method: .query)
         let parsedQuery = parser.parse()
         print(parsedQuery)
 

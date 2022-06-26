@@ -13,13 +13,17 @@ public protocol GraphQlMethodProtocol {
 
 public enum GraphQlMethod: String {
     case query
-    case mutations
+    case mutation
 }
 
 extension GraphQlMethod: GraphQlMethodProtocol {
 
     public var key: String {
-       rawValue
+       "query"
+    }
+
+    public var queryPrefix: String {
+        rawValue
     }
 
 }
